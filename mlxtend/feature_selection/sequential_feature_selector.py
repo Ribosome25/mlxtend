@@ -15,6 +15,7 @@ import sys
 from copy import deepcopy
 from itertools import combinations
 from sklearn.metrics import get_scorer
+from sklearn.metrics import make_scorer
 from sklearn.base import clone
 from sklearn.base import MetaEstimatorMixin
 from ..externals.name_estimators import _name_estimators
@@ -176,7 +177,7 @@ class SequentialFeatureSelector(_BaseXComposition, MetaEstimatorMixin):
     """
     def __init__(self, estimator, k_features=1,
                  forward=True, floating=False,
-                 verbose=0, scoring=None,
+                 verbose=0, scoring=None, scoring_args={},
                  cv=5, n_jobs=1,
                  pre_dispatch='2*n_jobs',
                  clone_estimator=True,
@@ -239,6 +240,8 @@ class SequentialFeatureSelector(_BaseXComposition, MetaEstimatorMixin):
                                      'be a Classifier or Regressor.')
         if isinstance(scoring, str):
             self.scorer = get_scorer(scoring)
+        elif callable(scoring):
+            self.scorer = make_scorer(scoring, **scoring_args)
         else:
             self.scorer = scoring
 
